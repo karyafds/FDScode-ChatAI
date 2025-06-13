@@ -1,6 +1,6 @@
 // Konfigurasi - Ganti dengan endpoint AI Agent Anda
-const AGENT_API_URL = "https://your-ai-agent.digitalocean.app/api/chat";
-const API_KEY = "sk_anda_12345"; // Ganti dengan API key sebenarnya
+const AGENT_API_URL = "https://xf6mtyrgb76vguqcmcc4dspe.agents.do-ai.run";
+const API_KEY = "snW7cw02XicCwKkT6eYVUyFcPNWbLqno"; // Ganti dengan API key sebenarnya
 
 document.addEventListener('DOMContentLoaded', function() {
     const chatMessages = document.getElementById('chat-messages');
