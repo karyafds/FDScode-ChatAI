@@ -3,93 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FDScode ChatAI</title>
+    <title>Custom FDScode.ai Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
+        :root {
+            --primary: #0061EB;
+            --secondary: #E5E8ED;
+            --dark: #031B4E;
+            --light: #F8F9FA;
+            --accent: #4A90E2;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
         }
-        #chat-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        
+        body {
+            background-color: #f5f7fb;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .chat-app {
+            width: 100%;
+            max-width: 500px;
+            height: 80vh;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-        }
-        #chat-messages {
-            height: 400px;
-            overflow-y: auto;
-            padding: 20px;
             display: flex;
             flex-direction: column;
+            background: white;
         }
-        .message {
-            max-width: 70%;
-            padding: 10px 15px;
-            margin-bottom: 10px;
-            border-radius: 18px;
-            line-height: 1.4;
-        }
-        .user-message {
-            align-self: flex-end;
-            background-color: #007bff;
+        
+        .chat-header {
+            background-color: var(--dark);
             color: white;
-            border-bottom-right-radius: 5px;
-        }
-        .bot-message {
-            align-self: flex-start;
-            background-color: #e9ecef;
-            color: black;
-            border-bottom-left-radius: 5px;
-        }
-        #input-area {
+            padding: 16px 20px;
             display: flex;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-top: 1px solid #ddd;
+            align-items: center;
+            gap: 12px;
         }
+        
+        .chat-header img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+        
+        .chat-body {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: var(--light);
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            line-height: 1.5;
+            position: relative;
+        }
+        
+        .bot-message {
+            background-color: white;
+            border: 1px solid var(--secondary);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .user-message {
+            background-color: var(--primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 4px;
+            display: block;
+        }
+        
+        .input-area {
+            padding: 16px;
+            background: white;
+            border-top: 1px solid var(--secondary);
+            display: flex;
+            gap: 8px;
+        }
+        
         #user-input {
             flex-grow: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
+            padding: 12px 16px;
+            border: 1px solid var(--secondary);
+            border-radius: 24px;
             outline: none;
+            font-size: 1rem;
         }
+        
         #send-button {
-            margin-left: 10px;
-            padding: 10px 20px;
-            background-color: #007bff;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--primary);
             color: white;
             border: none;
-            border-radius: 20px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        #send-button:hover {
-            background-color: #0056b3;
-        }
+        
         .typing-indicator {
-            display: none;
-            color: #6c757d;
-            font-style: italic;
-            margin-bottom: 10px;
+            display: inline-flex;
+            gap: 4px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--secondary);
+            margin-bottom: 12px;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+        
+        @media (max-width: 600px) {
+            .chat-app {
+                height: 90vh;
+                border-radius: 0;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Chat dengan AI Agent</h1>
-    <div id="chat-container">
-        <div id="chat-messages">
-            <div class="message bot-message">Halo! Saya AI Agent. Ada yang bisa saya bantu?</div>
-            <div id="typing-indicator" class="typing-indicator">AI sedang mengetik...</div>
+    <div class="chat-app">
+        <div class="chat-header">
+            <img src="https://xf6mtyrgb76vguqcmcc4dspe.agents.do-ai.run/static/chatbot/icons/default-agent.svg" alt="AI Logo">
+            <h2>FDScode.ai Assistant</h2>
         </div>
-        <div id="input-area">
-            <input type="text" id="user-input" placeholder="Ketik pesan Anda..." autocomplete="off">
-            <button id="send-button">Kirim</button>
+        
+        <div class="chat-body" id="chat-body">
+            <div class="message bot-message">
+                Hello! How can I help you today?
+                <span class="message-time">Just now</span>
+            </div>
+            
+            <div class="typing-indicator" id="typing-indicator" style="display: none;">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button id="send-button">
+                <i class="fas fa-paper-plane"></i>
+            </button>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script>
+        // Konfigurasi FDScode.ai
+        const AGENT_ID = "47b26d86-476b-11f0-bf8f-4e013e2ddde4";
+        const CHATBOT_ID = "JQ37WkbKPvU04N9rzFfNvh_SoZOT0XY5";
+        const API_BASE = "https://xf6mtyrgb76vguqcmcc4dspe.agents.do-ai.run";
+        
+        // Elemen DOM
+        const chatBody = document.getElementById('chat-body');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const typingIndicator = document.getElementById('typing-indicator');
+        
+        // Session ID untuk tracking percakapan
+        let sessionId = generateSessionId();
+        
+        // Generate random session ID
+        function generateSessionId() {
+            return 'session_' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        // Tambahkan pesan ke chat
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+            
+            const time = new Date();
+            const timeString = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            messageDiv.innerHTML = `
+                ${text}
+                <span class="message-time">${timeString}</span>
+            `;
+            
+            chatBody.appendChild(messageDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+        
+        // Tampilkan typing indicator
+        function showTyping() {
+            typingIndicator.style.display = 'inline-flex';
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+        
+        // Sembunyikan typing indicator
+        function hideTyping() {
+            typingIndicator.style.display = 'none';
+        }
+        
+        // Kirim pesan ke FDScode.ai API
+        async function sendToFDS(message) {
+            showTyping();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        agentId: AGENT_ID,
+                        chatbotId: CHATBOT_ID,
+                        sessionId: sessionId,
+                        message: message
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+                
+                const data = await response.json();
+                hideTyping();
+                addMessage(data.response, 'bot');
+                
+            } catch (error) {
+                hideTyping();
+                addMessage("Sorry, I'm having trouble connecting. Please try again.", 'bot');
+                console.error("Error:", error);
+            }
+        }
+        
+        // Event listeners
+        sendButton.addEventListener('click', () => {
+            const message = userInput.value.trim();
+            if (message) {
+                addMessage(message, 'user');
+                userInput.value = '';
+                sendToFDS(message);
+            }
+        });
+        
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const message = userInput.value.trim();
+                if (message) {
+                    addMessage(message, 'user');
+                    userInput.value = '';
+                    sendToFDS(message);
+                }
+            }
+        });
+        
+        // Inisialisasi chat
+        addMessage("Hello! How can I help you today?", 'bot');
+    </script>
 </body>
 </html>
